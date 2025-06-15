@@ -1,4 +1,4 @@
-# AI_Chatbot
+# AI_Chatbot_Prototype
 Developing an AI Chatbot for Teams integration
 
 This project is a proof-of-concept chatbot built with:
