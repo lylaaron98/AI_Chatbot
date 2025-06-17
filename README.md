@@ -7,7 +7,7 @@ This project is a proof-of-concept chatbot built with:
 
 ⚡ GroqAI for LLM-powered natural language processing
 
-🤖 PhiData for lightweight agent orchestration
+🤖 CrewAI for lightweight agent orchestration
 
 ☁ GitHub Actions for CI (linting + basic boot check)
 
