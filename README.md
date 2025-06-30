@@ -5,9 +5,9 @@ This project is a proof-of-concept chatbot built with:
 
 🖥 Streamlit for chat interface
 
-⚡ GroqAI for LLM-powered natural language processing
+⚡ Langchain for LLM-powered natural language processing
 
-🤖 CrewAI for lightweight agent orchestration
+🤖 Ollama API for generating responses
 
 ☁ GitHub Actions for CI (linting + basic boot check)
 
