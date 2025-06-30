@@ -1,0 +1,9 @@
+import streamlit as st
+
+#create the input form
+prompt = st.chat_input("Enter a prompt")
+
+#if input provided, add it to the screen
+if prompt:
+    with st.chat_message("user"):
+        st.markdown("prompt")
