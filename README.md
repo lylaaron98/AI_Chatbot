@@ -7,7 +7,7 @@ This project is a proof-of-concept chatbot built with:
 
 ⚡ Langchain for LLM-powered natural language processing
 
-🤖 Ollama API for generating responses
+🤖 Groq API for generating responses
 
 ☁ GitHub Actions for CI (linting + basic boot check)
 
