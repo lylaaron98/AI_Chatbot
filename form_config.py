@@ -10,13 +10,30 @@ def handle_booking_flow(prompt):
     if "show_booking_form" not in st.session_state:
         st.session_state.show_booking_form = False
 
-    # Detect booking intent
-    if "book" in prompt.lower() and "room" in prompt.lower():
+    lower_prompt = prompt.lower()
+
+    # ✅ NEW: Restart trigger
+    if "restart" in lower_prompt and ("booking" in lower_prompt or "room" in lower_prompt):
+        st.session_state.booking_step = None
+        st.session_state.booking_answers = {}
+        st.session_state.show_booking_form = False
+        return "🔁 Booking process has been restarted. You can now begin again by saying something like **'I want to book the room'**."
+
+    # ✅ Booking intent detection
+    booking_keywords = ["book", "booking", "reserve", "reservation"]
+    space_keywords = ["room", "space", "aie", "ase"]
+
+    if (
+        st.session_state.booking_step is None and
+        any(word in lower_prompt for word in booking_keywords) and
+        any(word in lower_prompt for word in space_keywords)
+    ):
+        st.session_state.show_booking_form = False  # reset form if previously shown
         st.session_state.booking_step = 1
         st.session_state.booking_answers = {}
         return "Sure! Let's check your eligibility to book the AIE/ASE room.\n\n**How many people will be attending?**"
 
-    # Handle step-by-step questions
+    # Step-by-step checks
     if st.session_state.booking_step:
         step = st.session_state.booking_step
         if step == 1:
@@ -40,6 +57,7 @@ def handle_booking_flow(prompt):
                 "💰 **Booking cost is SGD$5000 per use.**\n\n"
                 "Please fill in the final booking form below to confirm."
             )
+
     return None
 
 def render_booking_form():
