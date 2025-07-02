@@ -1,5 +1,6 @@
 import streamlit as st
 from faq_config import get_faq_response
+from form_config import handle_booking_flow, render_booking_form
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
 from groq_config import get_groq_llm
 
@@ -33,7 +34,11 @@ if nav == "Chat":
                 st.markdown(message.content)
         elif isinstance(message, AIMessage):
             with st.chat_message("assistant", avatar="images/PA_image.jpg"):
-                st.markdown(message.content)
+                st.markdown(
+                    f"<span style='font-weight: bold; color: #ff9800; font-size: 1.15em;'>Personal Assistant:</span> {message.content}",
+                    unsafe_allow_html=True
+                )
+
 
     prompt = st.chat_input("Enter a prompt")
 
@@ -42,23 +47,31 @@ if nav == "Chat":
             st.markdown(prompt)
         st.session_state.messages.append(HumanMessage(prompt))
 
-        # Check for FAQ match
-        faq_answer = get_faq_response(prompt)
-        if faq_answer:
+        # Step 1: Booking flow check
+        booking_response = handle_booking_flow(prompt)
+        if booking_response:
             with st.chat_message("assistant", avatar="images/PA_image.jpg"):
-                st.markdown(f"""
-                    <span style='font-weight: bold; color: #ff9800; font-size: 1.15em;'>Personal Assistant:</span> {faq_answer}
-                """, unsafe_allow_html=True)
-            st.session_state.messages.append(AIMessage(faq_answer))
+                st.markdown(f"<span style='font-weight: bold; color: #ff9800; font-size: 1.15em;'>Personal Assistant:</span> {booking_response}", unsafe_allow_html=True)
+            st.session_state.messages.append(AIMessage(booking_response))
         else:
-            llm = get_groq_llm()
-            result = llm.invoke(st.session_state.messages).content
+            # Step 2: FAQ check
+            faq_answer = get_faq_response(prompt)
+            if faq_answer:
+                with st.chat_message("assistant", avatar="images/PA_image.jpg"):
+                    st.markdown(f"<span style='font-weight: bold; color: #ff9800; font-size: 1.15em;'>Personal Assistant:</span> {faq_answer}", unsafe_allow_html=True)
+                st.session_state.messages.append(AIMessage(faq_answer))
+            else:
+                # Step 3: Groq LLM response
+                llm = get_groq_llm()
+                result = llm.invoke(st.session_state.messages).content
 
-            with st.chat_message("assistant", avatar="images/PA_image.jpg"):
-                st.markdown(f"""
-                    <span style='font-weight: bold; color: #ff9800; font-size: 1.15em;'>Personal Assistant:</span> {result}
-                """, unsafe_allow_html=True)
-            st.session_state.messages.append(AIMessage(result))
+                with st.chat_message("assistant", avatar="images/PA_image.jpg"):
+                    st.markdown(f"<span style='font-weight: bold; color: #ff9800; font-size: 1.15em;'>Personal Assistant:</span> {result}", unsafe_allow_html=True)
+                st.session_state.messages.append(AIMessage(result))
+
+    # If booking form needs to be shown after eligibility
+    if st.session_state.get("show_booking_form"):
+        render_booking_form()
 
 elif nav == "About":
     st.markdown("""

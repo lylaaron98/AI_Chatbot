@@ -36,6 +36,7 @@ multidict
 narwhals
 numpy
 orjson
+openpyxl
 packaging
 pandas
 pillow
