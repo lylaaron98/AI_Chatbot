@@ -2,9 +2,6 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 
-import smtplib
-from email.message import EmailMessage
-
 def handle_booking_flow(prompt):
     if "booking_step" not in st.session_state:
         st.session_state.booking_step = None
@@ -62,22 +59,7 @@ def handle_booking_flow(prompt):
             )
 
     return None
-
-def send_email_with_excel(receiver_email, excel_path, sender_email, sender_password):
-    msg = EmailMessage()
-    msg['Subject'] = 'AIE/ASE Room Booking Confirmation'
-    msg['From'] = sender_email
-    msg['To'] = receiver_email
-    msg.set_content("Please find attached the submitted AIE/ASE room booking form.")
-
-    with open(excel_path, 'rb') as f:
-        file_data = f.read()
-        msg.add_attachment(file_data, maintype='application', subtype='vnd.openxmlformats-officedocument.spreadsheetml.sheet', filename="booking.xlsx")
-
-    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-        smtp.login(sender_email, sender_password)
-        smtp.send_message(msg)
-
+    
 def render_booking_form():
     with st.form("final_booking_form", clear_on_submit=True):
         name = st.text_input("Your Name")
@@ -100,15 +82,6 @@ def render_booking_form():
         }
         df = pd.DataFrame(data)
         df.to_excel(file_path, index=False, engine="openpyxl")
-
-        # # ✅ Send email with attached Excel file
-        # send_email_with_excel(
-        #     receiver_email="recipient@example.com",  # ← Replace with actual recipient
-        #     excel_path=file_path,
-        #     sender_email=st.secrets["EMAIL_SENDER"],
-        #     sender_password=st.secrets["EMAIL_PASSWORD"]
-        # )
-
-        st.success("✅ Booking submitted and emailed successfully!")
+        st.success("✅ Booking submitted successfully! A confirmation will be sent to your email.")
         st.session_state.show_booking_form = False
 
