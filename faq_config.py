@@ -6,8 +6,9 @@ model = SentenceTransformer("all-MiniLM-L6-v2")
 # Your curated FAQ
 FAQ = {
     "What is AIE?": "The Applied Innovation Exchange (AIE) is Capgemini's global innovation platform, providing our clients with a gateway to the latest technnology and thinking. The AIE enables our clients to explore the innovation landscape; contextualize opportunities within their business; experiment with new concepts and ideas; and de-risk innovation efforts.",
-    "What is ASE?": "The ASE design and deliver dynamic",
-    "What are the available booking hours?": "The room is available from 9:00 AM to 6:00 PM, Monday to Friday.",
+    "What is ASE?": "The ASE design and deliver dynamic, empowering experiences that create the right conditions to unleash group genius. Using our unique combination of capabiltiies, we strip away the rational, emtional and political blockers that get in the way of powerful, transformative business outcomes. By unlocking this human potential, we enable teams, projects and organisations to connect differently. This creates the passion, engagement, alignment and momentum you need to get the future you want.",
+    "Can I use AIE?": "The room is available from 9:00 AM to 6:00 PM, Monday to Friday.",
+    "What do I need to provide if I want to use the AIE & ASE service?" : "To use the AIE & ASE service, you need to provide a brief description of your project or idea, the number of participants, and any specific requirements you may have for the session.",
 }
 
 faq_questions = list(FAQ.keys())
