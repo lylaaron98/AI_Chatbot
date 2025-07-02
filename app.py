@@ -1,4 +1,5 @@
 import streamlit as st
+from faq_config import get_faq_response
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
 from groq_config import get_groq_llm
 
@@ -41,15 +42,23 @@ if nav == "Chat":
             st.markdown(prompt)
         st.session_state.messages.append(HumanMessage(prompt))
 
-        llm = get_groq_llm()
+        # Check for FAQ match
+        faq_answer = get_faq_response(prompt)
+        if faq_answer:
+            with st.chat_message("assistant", avatar="images/PA_image.jpg"):
+                st.markdown(f"""
+                    <span style='font-weight: bold; color: #ff9800; font-size: 1.15em;'>Personal Assistant:</span> {faq_answer}
+                """, unsafe_allow_html=True)
+            st.session_state.messages.append(AIMessage(faq_answer))
+        else:
+            llm = get_groq_llm()
+            result = llm.invoke(st.session_state.messages).content
 
-        result = llm.invoke(st.session_state.messages).content
-
-        with st.chat_message("assistant", avatar="images/PA_image.jpg"):
-            st.markdown("""
-                <span style='font-weight: bold; color: #ff9800; font-size: 1.15em;'>Personal Assistant:</span> {result}
-            """.format(result=result), unsafe_allow_html=True)
-        st.session_state.messages.append(AIMessage(result))
+            with st.chat_message("assistant", avatar="images/PA_image.jpg"):
+                st.markdown(f"""
+                    <span style='font-weight: bold; color: #ff9800; font-size: 1.15em;'>Personal Assistant:</span> {result}
+                """, unsafe_allow_html=True)
+            st.session_state.messages.append(AIMessage(result))
 
 elif nav == "About":
     st.markdown("""
