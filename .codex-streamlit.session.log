@@ -1,0 +1,127 @@
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://192.168.0.208:8501
+  External URL: http://112.199.232.98:8501
+
++------------------------- Traceback (most recent call last) --------------------------+
+| C:\Users\drago\OneDrive\Documents\GitHub\AI_Chatbot\venv\Lib\site-packages\streamlit |
+| \runtime\scriptrunner\exec_code.py:128 in exec_func_with_error_handling              |
+|                                                                                      |
+| C:\Users\drago\OneDrive\Documents\GitHub\AI_Chatbot\venv\Lib\site-packages\streamlit |
+| \runtime\scriptrunner\script_runner.py:669 in code_to_exec                           |
+|                                                                                      |
+| C:\Users\drago\OneDrive\Documents\GitHub\AI_Chatbot\app.py:66 in <module>            |
+|                                                                                      |
+|   63             else:                                                               |
+|   64                 # Step 3: Groq LLM response                                     |
+|   65                 llm = get_groq_llm()                                            |
+| > 66                 result = llm.invoke(st.session_state.messages).content          |
+|   67                                                                                 |
+|   68                 with st.chat_message("assistant", avatar="images/PA_image.jpg") |
+|   69                     st.markdown(f"<span style='font-weight: bold; color: #ff980 |
+|                                                                                      |
+| C:\Users\drago\OneDrive\Documents\GitHub\AI_Chatbot\venv\Lib\site-packages\langchain |
+| _core\language_models\chat_models.py:276 in invoke                                   |
+|                                                                                      |
+|    273         config = ensure_config(config)                                        |
+|    274         return cast(                                                          |
+|    275             ChatGeneration,                                                   |
+| >  276             self.generate_prompt(                                             |
+|    277                 [self._convert_input(input)],                                 |
+|    278                 stop=stop,                                                    |
+|    279                 callbacks=config.get("callbacks"),                            |
+|                                                                                      |
+| C:\Users\drago\OneDrive\Documents\GitHub\AI_Chatbot\venv\Lib\site-packages\langchain |
+| _core\language_models\chat_models.py:776 in generate_prompt                          |
+|                                                                                      |
+|    773         **kwargs: Any,                                                        |
+|    774     ) -> LLMResult:                                                           |
+|    775         prompt_messages = [p.to_messages() for p in prompts]                  |
+| >  776         return self.generate(prompt_messages, stop=stop, callbacks=callbacks, |
+|    777                                                                               |
+|    778     async def agenerate_prompt(                                               |
+|    779         self,                                                                 |
+|                                                                                      |
+| C:\Users\drago\OneDrive\Documents\GitHub\AI_Chatbot\venv\Lib\site-packages\langchain |
+| _core\language_models\chat_models.py:633 in generate                                 |
+|                                                                                      |
+|    630             except BaseException as e:                                        |
+|    631                 if run_managers:                                              |
+|    632                     run_managers[i].on_llm_error(e, response=LLMResult(genera |
+| >  633                 raise e                                                       |
+|    634         flattened_outputs = [                                                 |
+|    635             LLMResult(generations=[res.generations], llm_output=res.llm_outpu |
+|    636             for res in results                                                |
+|                                                                                      |
+| C:\Users\drago\OneDrive\Documents\GitHub\AI_Chatbot\venv\Lib\site-packages\langchain |
+| _core\language_models\chat_models.py:623 in generate                                 |
+|                                                                                      |
+|    620         for i, m in enumerate(messages):                                      |
+|    621             try:                                                              |
+|    622                 results.append(                                               |
+| >  623                     self._generate_with_cache(                                |
+|    624                         m,                                                    |
+|    625                         stop=stop,                                            |
+|    626                         run_manager=run_managers[i] if run_managers else None |
+|                                                                                      |
+| C:\Users\drago\OneDrive\Documents\GitHub\AI_Chatbot\venv\Lib\site-packages\langchain |
+| _core\language_models\chat_models.py:845 in _generate_with_cache                     |
+|                                                                                      |
+|    842             result = generate_from_stream(iter(chunks))                       |
+|    843         else:                                                                 |
+|    844             if inspect.signature(self._generate).parameters.get("run_manager" |
+| >  845                 result = self._generate(                                      |
+|    846                     messages, stop=stop, run_manager=run_manager, **kwargs    |
+|    847                 )                                                             |
+|    848             else:                                                             |
+|                                                                                      |
+| C:\Users\drago\OneDrive\Documents\GitHub\AI_Chatbot\venv\Lib\site-packages\langchain |
+| _groq\chat_models.py:247 in _generate                                                |
+|                                                                                      |
+|   244             **params,                                                          |
+|   245             **kwargs,                                                          |
+|   246         }                                                                      |
+| > 247         response = self.client.create(messages=message_dicts, **params)        |
+|   248         return self._create_chat_result(response)                              |
+|   249                                                                                |
+|   250     async def _agenerate(                                                      |
+|                                                                                      |
+| C:\Users\drago\OneDrive\Documents\GitHub\AI_Chatbot\venv\Lib\site-packages\groq\reso |
+| urces\chat\completions.py:368 in create                                              |
+|                                                                                      |
+|   365                                                                                |
+|   366           timeout: Override the client-level default timeout for this request, |
+|   367         """                                                                    |
+| > 368         return self._post(                                                     |
+|   369             "/openai/v1/chat/completions",                                     |
+|   370             body=maybe_transform(                                              |
+|   371                 {                                                              |
+|                                                                                      |
+| C:\Users\drago\OneDrive\Documents\GitHub\AI_Chatbot\venv\Lib\site-packages\groq\_bas |
+| e_client.py:1232 in post                                                             |
+|                                                                                      |
+|   1229         opts = FinalRequestOptions.construct(                                 |
+|   1230             method="post", url=path, json_data=body, files=to_httpx_files(fil |
+|   1231         )                                                                     |
+| > 1232         return cast(ResponseT, self.request(cast_to, opts, stream=stream, str |
+|   1233                                                                               |
+|   1234     def patch(                                                                |
+|   1235         self,                                                                 |
+|                                                                                      |
+| C:\Users\drago\OneDrive\Documents\GitHub\AI_Chatbot\venv\Lib\site-packages\groq\_bas |
+| e_client.py:1034 in request                                                          |
+|                                                                                      |
+|   1031                     err.response.read()                                       |
+|   1032                                                                               |
+|   1033                 log.debug("Re-raising status error")                          |
+| > 1034                 raise self._make_status_error_from_response(err.response) fro |
+|   1035                                                                               |
+|   1036             break                                                             |
+|   1037                                                                               |
++--------------------------------------------------------------------------------------+
+BadRequestError: Error code: 400 - {'error': {'message': 'The model `llama3-8b-8192` has
+been decommissioned and is no longer supported. Please refer to 
+https://console.groq.com/docs/deprecations for a recommendation on which model to use 
+instead.', 'type': 'invalid_request_error', 'code': 'model_decommissioned'}}

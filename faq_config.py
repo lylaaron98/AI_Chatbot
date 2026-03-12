@@ -1,7 +1,13 @@
+from difflib import SequenceMatcher
+
 from sentence_transformers import SentenceTransformer, util
 
-# Load lightweight model for semantic similarity
-model = SentenceTransformer("all-MiniLM-L6-v2")
+MODEL_NAME = "all-MiniLM-L6-v2"
+SIMILARITY_THRESHOLD = 0.65
+
+model = None
+faq_embeddings = None
+_model_load_attempted = False
 
 # Your curated FAQ
 FAQ = {
@@ -14,15 +20,54 @@ FAQ = {
 }
 
 faq_questions = list(FAQ.keys())
-faq_embeddings = model.encode(faq_questions, convert_to_tensor=True)
+
+
+def _get_model():
+    global model, faq_embeddings, _model_load_attempted
+
+    if _model_load_attempted:
+        return model
+
+    _model_load_attempted = True
+    try:
+        # Avoid a startup-time network dependency when the model is not cached.
+        model = SentenceTransformer(MODEL_NAME, local_files_only=True)
+        faq_embeddings = model.encode(faq_questions, convert_to_tensor=True)
+    except Exception:
+        model = None
+        faq_embeddings = None
+
+    return model
+
+
+def _fallback_faq_response(user_input):
+    normalized_input = user_input.strip().lower()
+    best_question = None
+    best_score = 0.0
+
+    for question in faq_questions:
+        score = SequenceMatcher(None, normalized_input, question.lower()).ratio()
+        if question.lower() in normalized_input:
+            score = max(score, 0.9)
+        if score > best_score:
+            best_score = score
+            best_question = question
+
+    if best_question and best_score >= 0.6:
+        return FAQ[best_question]
+
+    return None
 
 def get_faq_response(user_input):
-    user_embedding = model.encode(user_input, convert_to_tensor=True)
-    scores = util.cos_sim(user_embedding, faq_embeddings)[0]
-    best_idx = int(scores.argmax())
-    best_score = float(scores[best_idx])
+    active_model = _get_model()
 
-    if best_score > 0.65:
-        return FAQ[faq_questions[best_idx]]
-    else:
-        return None
+    if active_model and faq_embeddings is not None:
+        user_embedding = active_model.encode(user_input, convert_to_tensor=True)
+        scores = util.cos_sim(user_embedding, faq_embeddings)[0]
+        best_idx = int(scores.argmax())
+        best_score = float(scores[best_idx])
+
+        if best_score > SIMILARITY_THRESHOLD:
+            return FAQ[faq_questions[best_idx]]
+
+    return _fallback_faq_response(user_input)
